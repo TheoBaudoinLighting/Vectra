@@ -1,16 +1,37 @@
+#include "Vectra/Engine.hpp"
+#include "Vectra/Parser.hpp"
 #include <iostream>
 
-// TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 int main() {
-    // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the <b>lang</b> variable name to see how CLion can help you rename it.
-    auto lang = "C++";
-    std::cout << "Hello and welcome to " << lang << "!\n";
+    std::string script = R"(
+        ESPACE Initial SUR x
+        POINT p1 DANS Initial AVEC { x: -7.5 }
+        POINT p2 DANS Initial AVEC { x: 4.0 }
 
-    for (int i = 1; i <= 5; i++) {
-        // TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-        std::cout << "i = " << i << std::endl;
+        PLIER EspacePlie DE Initial SUR { x: 0 }
+
+        PROJETER Sortie DE EspacePlie SUR x
+    )";
+
+    try {
+        Vectra::Engine engine;
+        Vectra::Parser parser(engine);
+
+        parser.execute(script);
+
+        std::cout << "## ETAT INITIAL ##" << std::endl;
+        engine.getSpace("Initial").print();
+
+        std::cout << "\n## ETAT APRES PLIAGE ##" << std::endl;
+        engine.getSpace("EspacePlie").print();
+
+        std::cout << "\n## ETAT APRES PROJECTION ##" << std::endl;
+        engine.getSpace("Sortie").print();
+
+    } catch (const std::exception& e) {
+        std::cerr << "Erreur fatale Vectra: " << e.what() << std::endl;
+        return 1;
     }
 
     return 0;
-    // TIP See CLion help at <a href="https://www.jetbrains.com/help/clion/">jetbrains.com/help/clion/</a>. Also, you can try interactive lessons for CLion by selecting 'Help | Learn IDE Features' from the main menu.
 }
